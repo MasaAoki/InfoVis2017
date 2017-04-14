@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>W02: Task2</title>
+  </head>
+  <body>
+      Please enter coordinates of 3points <br>
+    <form name="form1">
+      (1)
+      x : <input type="text" name="vx1" value = ""/>
+      y : <input type="text" name="vy1" value = ""/>
+      z : <input type="text" name="vz1" value = ""/> <br>
+      (2)
+      x : <input type="text" name="vx2" value = ""/>
+      y : <input type="text" name="vy2" value = ""/>
+      z : <input type="text" name="vz2" value = ""/> <br>
+      (3)
+      x : <input type="text" name="vx3" value = ""/>
+      y : <input type="text" name="vy3" value = ""/>
+      z : <input type="text" name="vz3" value = ""/> <br> 
+      <input type="button" onclick = "onButton()" value = "Calculate area of triangle"/>
+    </form>
+    <script src="vec3.js"></script>
+    <script>
+      function onButton() {
+        var x1=Number(document.form1.vx1.value);
+        var y1=Number(document.form1.vy1.value);
+        var z1=Number(document.form1.vz1.value);
+        var x2=Number(document.form1.vx2.value);
+        var y2=Number(document.form1.vy2.value);
+        var z2=Number(document.form1.vz2.value);
+        var x3=Number(document.form1.vx3.value);
+        var y3=Number(document.form1.vy3.value);
+        var z3=Number(document.form1.vz3.value);
+        var v1 = new Vec3(x1,y1,z1);
+        var v2 = new Vec3(x2,y2,z2);
+        var v3 = new Vec3(x3,y3,z3);
+        window.alert('S='+AreaOfTriangle(v1,v2,v3));
+      }
+    </script>
+  </body>
+</html>
