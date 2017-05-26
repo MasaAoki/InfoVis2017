@@ -1,0 +1,91 @@
+<html>
+    <head>
+	<title>W12: task 3</title>
+    </head>
+    <body style="margin:0">
+	<script src="http://mrdoob.github.io/three.js/build/three.min.js"></script>
+	<script src="http://mrdoob.github.io/three.js/examples/js/math/Lut.js"></script>
+	<script src="http://mrdoob.github.io/three.js/examples/js/controls/TrackballControls.js"></script>
+	<script src="http://naohisas.github.io/KVS.js/Build/KVS.min.js"></script>
+	<script src="http://naohisas.github.io/KVS.js/Build/KVS2THREE.min.js"></script>
+	<script src="http://naohisas.github.io/KVS.js/Source/KVSLobsterData.js"></script>
+  <script type="x-shader/x-vertex" id="phong.vert">
+  varying vec3 point_color;
+  varying vec4 point_position;
+  varying vec3 normal_vector;
+  uniform vec3 material_color;
+
+  void main()
+  {
+    point_color = material_color;
+    point_position = modelViewMatrix * vec4( position, 1.0 );
+    normal_vector = normalMatrix * normal;
+
+    gl_Position = projectionMatrix * point_position;
+  }
+	</script>
+
+	<script type="x-shader/x-fragment" id="cook-trrance.frag">
+  varying vec3 point_color;
+  varying vec4 point_position;
+  varying vec3 normal_vector;
+  uniform vec3 light_position;
+  uniform vec3 camera_position;
+  uniform vec3 material_color;
+
+  vec3 CookTorranceReflection( vec3 C, vec3 L, vec3 N, vec3 V )
+  {
+    float ka = 0.3;
+    float kd = 0.5;
+    float ks = 0.8;
+    float n = 20.0;
+    float m = 0.2;
+
+    vec3 H = normalize( L+V );
+    float dd = max( dot( N, L ), 0.0 );
+    float ds = 0.0;
+    if ( dd > 0.0 )
+    {
+      float NH = dot(N,H);
+      float VH = dot(V,H);
+      float NV = dot(N,V);
+      float NL = dot(N,L);
+
+      float D = (1.0/(4.0*m*m*NH*NH*NH*NH))*exp((NH*NH-1.0)/(m*m*NH*NH));
+      float G = min(1.0, min((2.0*NH*NV)/VH, (2.0*NH*NL)/VH));
+
+      float c = VH;
+      float g = sqrt(n*n+c*c-1.0);
+      float g1 = g-c;
+      float g2 = g+c;
+      float cg1 = c*g1-1.0;
+      float cg2 = c*g2-1.0;
+      float F = (g1*g1/(g2*g2)) * (1.0+cg2*cg2/(cg1*cg1));
+
+      ds = D*G*F/NV/NL/3.1415926535;
+    }
+    float Ia = ka;
+    float Id = kd * dd;
+    float Is = ks * ds;
+    return C * ( Ia + Id + Is );
+  }
+
+  void main()
+  {
+    vec3 C = point_color;
+    vec3 L = normalize( light_position - point_position.xyz );
+    vec3 N = normalize( normal_vector );
+    vec3 V = normalize( camera_position - point_position.xyz );
+
+    vec3 shaded_color = CookTorranceReflection( C, L, N, V );
+    gl_FragColor = vec4( shaded_color, 1.0 );
+  }
+	</script>
+  <script src="Bounds.js"></script>
+  <script src="Isosurfaces_task3.js"></script>
+  <script src="w12_task3.js"></script>
+	<script>
+	 main();
+	</script>
+    </body>
+</html>
